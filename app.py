@@ -21,7 +21,7 @@ NOTIFY_EMAIL = os.environ.get('NOTIFY_EMAIL')
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
 # 圖片網址
-ADDRESS_IMAGE_URL = "https://raw.githubusercontent.com/b12071207-cmd/taotze-ai-bot/main/四間分店地址圖片.png"
+ADDRESS_IMAGE_URL = "https://raw.githubusercontent.com/b12071207-cmd/taotze-ai-bot/main/address.png"
 PRICE_IMAGE_URL = "https://raw.githubusercontent.com/b12071207-cmd/taotze-ai-bot/main/price.jpg"
 
 # 讀取 QA 資料
