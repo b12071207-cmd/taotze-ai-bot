@@ -20,8 +20,9 @@ NOTIFY_EMAIL = os.environ.get('NOTIFY_EMAIL')
 
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
-# 分店地址圖片網址
+# 圖片網址
 ADDRESS_IMAGE_URL = "https://raw.githubusercontent.com/b12071207-cmd/taotze-ai-bot/main/四間分店地址圖片.png"
+PRICE_IMAGE_URL = "https://raw.githubusercontent.com/b12071207-cmd/taotze-ai-bot/main/price.jpg"
 
 # 讀取 QA 資料
 with open('qa.txt', 'r', encoding='utf-8') as f:
@@ -70,6 +71,9 @@ SYSTEM_PROMPT = f"""你是陶澤按摩健康管理中心的線上客服助理，
 
 【地址圖片】
 當客人詢問分店地址、位置、怎麼去、在哪裡等相關問題時，回覆文字地址後，請在末尾加上標記：[傳送地址圖片]
+
+【價格圖片】
+當客人詢問價格、費用、多少錢、方案等相關問題時，回覆文字價格後，請在末尾加上標記：[傳送價格圖片]
 
 【重要限制】
 - 絕對不可以捏造或猜測知識庫以外的資訊
@@ -150,10 +154,15 @@ def check_address_image(text):
     return '[傳送地址圖片]' in text
 
 
+def check_price_image(text):
+    return '[傳送價格圖片]' in text
+
+
 def clean_response(text):
     text = re.sub(r'\[預約資訊\].*?\[/預約資訊\]', '', text, flags=re.DOTALL)
     text = text.replace('[轉接客服]', '')
     text = text.replace('[傳送地址圖片]', '')
+    text = text.replace('[傳送價格圖片]', '')
     return text.strip()
 
 
@@ -226,11 +235,14 @@ def webhook():
 
                 # 傳送給客人（清除標記）
                 send_address = check_address_image(ai_response)
+                send_price = check_price_image(ai_response)
                 clean_text = clean_response(ai_response)
                 if clean_text:
                     send_fb_message(sender_id, clean_text, send_platform)
                 if send_address:
                     send_image_message(sender_id, ADDRESS_IMAGE_URL, send_platform)
+                if send_price:
+                    send_image_message(sender_id, PRICE_IMAGE_URL, send_platform)
 
     return jsonify({"status": "ok"}), 200
 
